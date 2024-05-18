@@ -51,6 +51,22 @@ export default function Cart() {
     }
   };
 
+  const removeCartItem1 = async (productId) => {
+    try {
+      const q = query(
+        collection(db, 'Cart'),
+        where('productId', '==', productId),
+        where('userId', '==', userId)
+      );
+      const snapshot = await getDocs(q);
+      for (const doc of snapshot.docs) {
+        await deleteDoc(doc.ref);
+      }
+    } catch (error) {
+      console.error('Error removing cart item:', error);
+    }
+  };
+
   const handleCheckOut = async () => {
     try {
       const checkoutTime = serverTimestamp();

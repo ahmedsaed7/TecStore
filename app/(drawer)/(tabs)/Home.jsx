@@ -144,7 +144,7 @@ const Home = () => {
 
         {/* Laptops Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+          <Text style={styles.sectionTitle1}>
             Laptops
             <Pressable onPress={() => router.push(`/categories?category=laptop`)}>
               <Text style={styles.see}>see more {'>>'} </Text>
@@ -165,7 +165,7 @@ const Home = () => {
 
         {/* Phones Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+          <Text style={styles.sectionTitle1}>
             Phones
             <Pressable onPress={() => router.push(`/categories?category=phone`)}>
               <Text style={styles.see}>see more {'>>'}</Text>
@@ -186,7 +186,7 @@ const Home = () => {
 
         {/* Accessories Section */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
+          <Text style={styles.sectionTitle1}>
             Accessories
             <Pressable onPress={() => router.push(`/categories?category=accessories`)}>
               <Text style={styles.see}>see more {'>>'}</Text>
@@ -254,6 +254,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
   },
+  sectionTitle1: {
+    flexDirection: 'row',
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    alignItems :"center"
+  },
   itemContainer: {
     padding: 10,
     borderRadius: 10,
@@ -290,7 +297,8 @@ const styles = StyleSheet.create({
     color: '#0a4a7c',
     textDecorationLine: 'underline',
     fontSize: 12,
-  },
+    marginLeft: 10,
+    },
 });
 
 export default Home;

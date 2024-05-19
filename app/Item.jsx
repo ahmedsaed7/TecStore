@@ -116,7 +116,7 @@ export default function Item({ name, price, image, productId }) {
       <View style={styles.itemActions}>
       <Pressable onPress={() => toggleFavorite(productId)}>
         <Ionicons
-          name="heart-outline"
+          name={favorites[productId] ?"heart" : "heart-outline"}
           size={30}
           color={favorites[productId] ? '#0a4a7c' : 'lightgray'}
         />
@@ -134,7 +134,7 @@ export default function Item({ name, price, image, productId }) {
       onPress={() => toggleCart(productId)}
     >
       <Ionicons
-        name="cart-outline"
+        name={addedToCart[price] ?"cart" : "cart-outline"}
         size={30}
         color={addedToCart[productId] ? '#0a4a7c' : 'lightgray'}
       />

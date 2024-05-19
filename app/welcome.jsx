@@ -72,12 +72,12 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: '100%',
-    height: "70%", 
+    height: "65%", 
     marginBottom: 20 ,
   },
   logoc: {
     width: '100%',
-    height: "70%", 
+    height: "65%", 
   },
   Icon: {
     textAlign :  'right',

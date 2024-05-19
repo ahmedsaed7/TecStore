@@ -302,7 +302,9 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignSelf: 'center',
     marginBottom: 20,
-    width: '50%', // Adjust the button width based on the screen width
+    width: '50%', 
+    textAlign : "center",
+    alignItems : "center"
   },
   signInPrompt: {
     alignItems: 'center',

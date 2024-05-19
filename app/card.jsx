@@ -50,6 +50,7 @@ export default function Cart() {
       console.error('Error removing cart item:', error);
     }
   };
+  
 
   const handleCheckOut = async () => {
     try {

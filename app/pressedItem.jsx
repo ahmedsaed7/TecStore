@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image , Pressable , } from 'react-native';
+import { StyleSheet, Text, View, Image , Pressable ,ScrollView } from 'react-native';
 import { useLocalSearchParams } from "expo-router";
 import {query, collection , where , getDocs, doc, getDoc, updateDoc, addDoc  } from "firebase/firestore";
 import { db } from '../firebase'; 
@@ -167,6 +167,7 @@ export default function PressedItem( ) {
   }, [productId]);
 
   return (
+  <ScrollView style={styles.scrollContainer}>
     <View style={styles.container}>
       <View style={styles.textContainer}>
         <Pressable Pressable onPress={() => router.back()} style={styles.backButton}>
@@ -198,12 +199,14 @@ export default function PressedItem( ) {
             <Pressable style={styles.buttonAdd} onPress={() => toggleCart(productId)}>
               <Text style={styles.buttonText}>Add To Cart</Text>
             </Pressable>
+            <Text style={styles.price}>${itemData.description}</Text>
           </>
         ) : (
           <Text>Loading...</Text>
         )}
       </View>
     </View>
+  </ScrollView>
   );  
 }
 
@@ -267,5 +270,9 @@ const styles = StyleSheet.create({
     backButton: {
       position: "absolute",
       left: 10,
+    },
+    scrollContainer: {
+      flex: 1,
+      backgroundColor: 'lightgray',
     },
   });

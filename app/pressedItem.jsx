@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image , Pressable ,ScrollView } from 'react-native';
-import { useLocalSearchParams } from "expo-router";
-import {query, collection , where , getDocs, doc, getDoc, updateDoc, addDoc  } from "firebase/firestore";
+import { StyleSheet, Text, View, Image , Pressable , ScrollView , SafeAreaView, ActivityIndicator} from 'react-native';
+import { useLocalSearchParams, useRouter } from "expo-router";
+import {query, collection , where , getDocs, doc, getDoc, deleteDoc, addDoc  } from "firebase/firestore";
 import { db } from '../firebase'; 
 import StarRating from "./StarRating";
 import {addRate , deleteRate , getAverageRate , checkUserRating, getRateByUserIdAndProductId} from "./Rates";
 import { Ionicons } from '@expo/vector-icons';
 import { getAuth, onAuthStateChanged } from 'firebase/auth';
 
-
 export default function PressedItem( ) {
-  
+  const router = useRouter();
   const { productId } = useLocalSearchParams();
   const [itemData, setItemData] = useState([]);
   const [quantity, setQuantity] = useState(0);
@@ -19,6 +18,7 @@ export default function PressedItem( ) {
   const [rating, setRating] = useState(0);
   const [averageRating, setAverageRating] = useState(0);
   const [hasRated, setHasRated] = useState(false);
+  const [addedToCart, setAddedToCart] = useState(true);
 
   useEffect(() => {
     const auth = getAuth();
@@ -47,24 +47,58 @@ export default function PressedItem( ) {
     }
   }, [userId]);
 
+  // const toggleCart = async (productId) => {
+  //   try {
+  //     if (!userId) {
+  //       alert('Please sign in to add items to your cart');
+  //       return;
+  //     }
+  
+  //     const cartQuery = query(
+  //       collection(db, 'Cart'),
+  //       where('userId', '==', userId),
+  //       where('productId', '==', productId)
+  //     );
+  //     const cartSnapshot = await getDocs(cartQuery);
+  
+  //     if (!cartSnapshot.empty) {
+  //       const cartDoc = cartSnapshot.docs[0];
+  //       const { quantity: currentQuantity } = cartDoc.data();
+  //       await updateDoc(cartDoc.ref, { quantity: currentQuantity + 1 });
+  //     } else {
+  //       const data = {
+  //         userId,
+  //         productId,
+  //         quantity: 1,
+  //       };
+  //       await addDoc(collection(db, 'Cart'), data);
+  //     }
+  
+  //     console.log('Product added to cart successfully');
+  
+  //   } catch (error) {
+  //     console.error('Error toggling cart:', error);
+  //   }
+  // };
+  
   const toggleCart = async (productId) => {
     try {
       if (!userId) {
         alert('Please sign in to add items to your cart');
         return;
       }
-  
+
       const cartQuery = query(
         collection(db, 'Cart'),
         where('userId', '==', userId),
         where('productId', '==', productId)
       );
       const cartSnapshot = await getDocs(cartQuery);
-  
+
       if (!cartSnapshot.empty) {
         const cartDoc = cartSnapshot.docs[0];
-        const { quantity: currentQuantity } = cartDoc.data();
-        await updateDoc(cartDoc.ref, { quantity: currentQuantity + 1 });
+        await deleteDoc(cartDoc.ref);
+        setAddedToCart((prev) => ({ ...prev, [productId]: false }));
       } else {
         const data = {
           userId,
@@ -72,15 +106,13 @@ export default function PressedItem( ) {
           quantity: 1,
         };
         await addDoc(collection(db, 'Cart'), data);
+        setAddedToCart((prev) => ({ ...prev, [productId]: true }));
       }
-  
-      console.log('Product added to cart successfully');
-  
+
     } catch (error) {
       console.error('Error toggling cart:', error);
     }
   };
-  
 
   const fetchProduct = async () => {
     const fetchedProduct = await getProductById(id);
@@ -167,8 +199,10 @@ export default function PressedItem( ) {
   }, [productId]);
 
   return (
-  <ScrollView style={styles.scrollContainer}>
-    <View style={styles.container}>
+
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.innerContainer}>
       <View style={styles.textContainer}>
         <Pressable Pressable onPress={() => router.back()} style={styles.backButton}>
         <Ionicons name="arrow-back" size={24} color="#000" />
@@ -182,8 +216,8 @@ export default function PressedItem( ) {
           )}
             <Text style={styles.name}>{itemData.name}</Text>
             <Text style={styles.price}>${itemData.price}</Text>
-
             <StarRating rating={rating} onRatingChange={setRating} />
+            <View style={styles.header}>
               {hasRated ? (
                 <Pressable style={styles.buttonAction} onPress={handleRatingDelete}>
                   <Text style={styles.buttonText}>Delete Rating</Text>
@@ -193,29 +227,54 @@ export default function PressedItem( ) {
                   <Text style={styles.buttonText}>Submit Rating</Text>
                 </Pressable>
               )}
-            <Text style={{ fontWeight: "bold" }}>
-              Average Rating: {averageRating}
-            </Text>
-            <Pressable style={styles.buttonAdd} onPress={() => toggleCart(productId)}>
-              <Text style={styles.buttonText}>Add To Cart</Text>
+            <Pressable
+              style={styles.itemActions}
+              onPress={() => toggleCart(productId)}
+              >
+              <Ionicons
+                name={addedToCart[productId] ? 'cart' : "cart-outline"}
+                size={40}
+                color={addedToCart[productId] ? '#0a4a7c' : 'black'}
+                />
             </Pressable>
-            <Text style={styles.price}>${itemData.description}</Text>
+              </View>
+            <Text style={{  fontSize : 20 , fontWeight: "bold" , textAlign : 'center', marginBottom : 20, color :  '#0a4a7c' }}>
+              Average Rating: {averageRating} 
+            </Text>
+            {/* <Pressable style={styles.buttonAdd} onPress={() => toggleCart(productId)}>
+              <Text style={styles.buttonText}>Add To Cart</Text>
+            </Pressable> */}
+            {/* <Text style={styles.description}>${itemData.description}</Text> */}
           </>
         ) : (
-          <Text>Loading...</Text>
+          // <Text>Loading...</Text>
+          <ActivityIndicator size={50}></ActivityIndicator>
         )}
       </View>
     </View>
-  </ScrollView>
+        </SafeAreaView>
+        </ScrollView>
   );  
 }
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+    description :{
+      fontSize: 18,
+      fontWeight:'bold',
+    },
     container: {
       flex: 1,
-      backgroundColor:"lightgray",
-      // alignItems: 'center',
-      paddingTop: 30,
+      marginTop: 30,
+      backgroundColor: 'lightgray',
+    },
+    innerContainer: {
+      flexGrow: 1, // Ensure the inner container fills the available space
     },
     textContainer: {
       marginTop: 10,
@@ -234,16 +293,16 @@ const styles = StyleSheet.create({
       width: '100%', 
       height: '100%', 
       borderRadius: 20,
-      resizeMode: 'contain'
+      // resizeMode: 'contain'
     },
     imageContainer: {
-      marginTop: 20,
+      marginTop: 25,
       position: "relative",
       width: "100%",
-      height: "40%",
+      height: "55%",
     },  
     buttonAdd: {
-      backgroundColor: "#636970",
+      backgroundColor: '#0a4a7c',
       alignItems: "center",
       justifyContent: "center",
       paddingVertical: 12,
@@ -253,7 +312,7 @@ const styles = StyleSheet.create({
       width: 300,
     },
     buttonAction: {
-      backgroundColor: "red",
+      backgroundColor: '#0a4a7c',
       alignItems: "center",
       justifyContent: "center",
       paddingVertical: 12,
@@ -261,7 +320,7 @@ const styles = StyleSheet.create({
       borderRadius: 12,
       marginTop: 30,
       marginBottom: 30,
-      width: '100%',
+      width: '80%',
     },
     buttonText: {
       color: "#fff",
@@ -276,3 +335,4 @@ const styles = StyleSheet.create({
       backgroundColor: 'lightgray',
     },
   });
+  

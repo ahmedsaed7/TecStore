@@ -50,7 +50,6 @@ export default function Cart() {
       console.error('Error removing cart item:', error);
     }
   };
-  
 
   const handleCheckOut = async () => {
     try {
@@ -101,7 +100,7 @@ export default function Cart() {
           </View>
         }
       />
-      <Pressable onPress={handleCheckOut}>
+      <Pressable onPress={handleCheckOut} style={styles.buttonAction}>
         <Text style={styles.footer}>Check Out</Text>
       </Pressable>
     </View>
@@ -188,8 +187,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   footer: {
-    backgroundColor: 'blue',
-    color: 'white',
+    color: "#fff",
+    fontSize: 16,
     padding: 15,
     textAlign: 'center',
   },
@@ -207,6 +206,17 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 2,
     padding: 10,
+  },
+  buttonAction: {
+    backgroundColor: '#0a4a7c',
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 12,
+    paddingHorizontal: 40,
+    borderRadius: 12,
+    marginTop: 30,
+    marginBottom: 30,
+    width: '100%',
   },
   productName: {
     fontSize: 18,

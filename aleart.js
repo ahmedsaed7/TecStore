@@ -1,0 +1,1 @@
+alert("Error you cant connect to the server") ;
